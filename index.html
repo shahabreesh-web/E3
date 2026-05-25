@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeEye - অনলাইন শপিং</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="container">
+                <span>📞 01829406375</span>
+                <span>🏠 ফ্রি ডেলিভারি</span>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <div class="container nav-content">
+                <div class="logo" onclick="window.location.reload()">🐝 BeeEye</div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 পণ্য খুঁজুন..." onkeyup="searchProducts()">
+                </div>
+                <div class="nav-icons">
+                    <button onclick="showWishlist()">❤️ <span id="wishlistCount">0</span></button>
+                    <button onclick="showCart()">🛒 <span id="cartCount">0</span></button>
+                    <button onclick="showLoginModal()" id="loginBtn">👤 লগইন</button>
+                    <button onclick="showUserMenu()" id="userBtn" style="display:none;">👤 <span id="userName"></span></button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="slider" id="sliderContainer"></div>
+
+    <section class="deals-section">
+        <div class="container">
+            <h2>🔥 আজকের ডিল</h2>
+            <div class="product-grid" id="dealGrid"></div>
+        </div>
+    </section>
+
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-box">
+                <select id="categoryFilter" onchange="applyFilters()">
+                    <option value="all">সব ক্যাটাগরি</option>
+                    <option value="electronics">মোবাইল</option>
+                    <option value="laptop">ল্যাপটপ</option>
+                    <option value="clothing">কাপড়</option>
+                    <option value="shoes">জুতা</option>
+                    <option value="beauty">সৌন্দর্য</option>
+                </select>
+                <input type="number" id="minPrice" placeholder="মিন দাম" onchange="applyFilters()">
+                <input type="number" id="maxPrice" placeholder="ম্যাক্স দাম" onchange="applyFilters()">
+                <select id="sortBy" onchange="applyFilters()">
+                    <option value="default">সর্ট</option>
+                    <option value="price-low">দাম কম>বেশি</option>
+                    <option value="price-high">দাম বেশি>কম</option>
+                    <option value="rating">রেটিং</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <section class="categories">
+        <div class="container">
+            <h2>ক্যাটাগরি</h2>
+            <div class="category-grid">
+                <div class="category-item" onclick="filterCategory('electronics')">📱<br>মোবাইল</div>
+                <div class="category-item" onclick="filterCategory('laptop')">💻<br>ল্যাপটপ</div>
+                <div class="category-item" onclick="filterCategory('clothing')">👕<br>কাপড়</div>
+                <div class="category-item" onclick="filterCategory('shoes')">👟<br>জুতা</div>
+                <div class="category-item" onclick="filterCategory('beauty')">💄<br>সৌন্দর্য</div>
+                <div class="category-item" onclick="filterCategory('all')">📦<br>সব</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="products">
+        <div class="container">
+            <h2>সব প্রোডাক্ট</h2>
+            <div class="product-grid" id="productGrid"></div>
+        </div>
+    </section>
+
+    <section class="newsletter">
+        <div class="container">
+            <h2>📧 নিউজলেটার সাইন আপ</h2>
+            <p>অফার ও নতুন প্রোডাক্টের আপডেট পেতে সাইন আপ করুন!</p>
+            <form onsubmit="handleNewsletter(event)">
+                <input type="email" placeholder="আপনার ইমেইল" required>
+                <button type="submit">সাইন আপ</button>
+            </form>
+        </div>
+    </section>
+
+    <a href="tel:01829406375" class="call-now-btn">📞 কল</a>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>🐝 BeeEye</h3>
+                    <p>বাংলাদেশের সবচেয়ে বিশ্বস্ত অনলাইন শপ!</p>
+                    <button onclick="showAdminLogin()" style="margin-top:10px;padding:8px;background:#f8561e;color:white;border:none;border-radius:4px;cursor:pointer;">⚙️ অ্যাডমিন</button>
+                </div>
+                <div>
+                    <h3>যোগাযোগ</h3>
+                    <p>📞 01829406375</p>
+                    <p>✉️ support@beeeye.com</p>
+                </div>
+                <div>
+                    <h3>লিংক</h3>
+                    <p><a href="#">শর্তাবলী</a></p>
+                    <p><a href="#">গোপনীয়তা</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 BeeEye. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🛒 কার্ট</h2>
+                <button class="close-btn" onclick="closeCart()">✕</button>
+            </div>
+            <div class="modal-body" id="cartItems"></div>
+            <div class="modal-footer">
+                <h3>মোট: ৳<span id="totalPrice">0</span></h3>
+                <button class="checkout-btn" onclick="showCheckout()">✓ অর্ডার করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Modal -->
+    <div class="modal" id="wishlistModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>❤️ উইশলিস্ট</h2>
+                <button class="close-btn" onclick="closeWishlist()">✕</button>
+            </div>
+            <div class="modal-body" id="wishlistItems"></div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👤 লগইন / রেজিস্ট্রেশন</h2>
+                <button class="close-btn" onclick="closeLogin()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="login-tabs">
+                    <button class="login-tab active" onclick="showLoginForm()" id="loginTabBtn">লগইন</button>
+                    <button class="login-tab" onclick="showRegisterForm()" id="registerTabBtn">রেজিস্ট্রেশন</button>
+                </div>
+                <form onsubmit="handleLogin(event)" id="loginForm">
+                    <input type="text" id="loginPhone" placeholder="📱 ফোন নম্বর" required>
+                    <input type="password" id="loginPassword" placeholder="🔐 পাসওয়ার্ড" required>
+                    <button type="submit" class="login-btn">লগইন</button>
+                </form>
+                <form onsubmit="handleRegister(event)" id="registerForm" style="display:none;">
+                    <input type="text" id="regName" placeholder="👤 আপনার নাম" required>
+                    <input type="text" id="regPhone" placeholder="📱 ফোন নম্বর" required>
+                    <input type="email" id="regEmail" placeholder="✉️ ইমেইল" required>
+                    <input type="password" id="regPassword" placeholder="🔐 পাসওয়ার্ড" required>
+                    <input type="text" id="regAddress" placeholder="📍 ঠিকানা" required>
+                    <button type="submit" class="login-btn">রেজিস্ট্রেশন</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✓ অর্ডার নিশ্চিত করুন</h2>
+                <button class="close-btn" onclick="closeCheckout()">✕</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="processOrder(event)" id="checkoutForm">
+                    <h3>📦 ডেলিভারি তথ্য</h3>
+                    <input type="text" id="customerName" placeholder="👤 আপনার নাম" required>
+                    <input type="text" id="customerPhone" placeholder="📱 ফোন নম্বর" required>
+                    <input type="text" id="customerAddress" placeholder="📍 সম্পূর্ণ ঠিকানা" required>
+                    
+                    <h3>💰 পেমেন্ট মেথড</h3>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="cod" checked>
+                            <div class="payment-box">💵 ক্যাশ অন ডেলিভারি</div>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="bkash">
+                            <div class="payment-box">📱 bKash</div>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="nagad">
+                            <div class="payment-box">🪙 Nagad</div>
+                        </label>
+                    </div>
+                    
+                    <div id="paymentDetails">
+                        <p style="font-size:12px;color:#666;margin:10px 0;">bKash/Nagad: 01829406375 এ সেন্ড মানি করুন। ট্রানজেকশন আইডি দিন।</p>
+                        <input type="text" id="transactionId" placeholder="ট্রানজেকশন আইডি (অপশনাল)">
+                    </div>
+                    
+                    <button type="submit" class="checkout-btn">✅ অর্ডার নিশ্চিত করুন</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Modal -->
+    <div class="modal" id="orderSuccessModal">
+        <div class="modal-content" style="text-align:center;">
+            <div class="modal-header">
+                <h2>🎉 অর্ডার সফল!</h2>
+                <button class="close-btn" onclick="closeOrderSuccess()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size:60px;">✅</div>
+                <h3>আপনার অর্ডার গৃহীত হয়েছে!</h3>
+                <p>আমরা শীঘ্রই যোগাযোগ করব।</p>
+                <div id="orderDetails" style="margin-top:20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="adminLoginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ অ্যাডমিন লগইন</h2>
+                <button class="close-btn" onclick="closeAdminLogin()">✕</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="handleAdminLogin(event)">
+                    <input type="password" id="adminPassword" placeholder="🔐 অ্যাডমিন পাসওয়ার্ড" required>
+                    <button type="submit" class="login-btn">লগইন</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="adminPanelModal">
+        <div class="modal-content" style="max-width:800px;">
+            <div class="modal-header">
+                <h2>⚙️ অ্যাডমিন প্যানেল - BeeEye</h2>
+                <button class="close-btn" onclick="closeAdminPanel()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="admin-tabs">
+                    <button class="admin-tab active" onclick="showAdminTab('products')">📦 প্রোডাক্ট</button>
+                    <button class="admin-tab" onclick="showAdminTab('orders')">📋 অর্ডার</button>
+                    <button class="admin-tab" onclick="showAdminTab('add')">➕ নতুন প্রোডাক্ট</button>
+                </div>
+                
+                <div id="adminProductsTab">
+                    <table class="admin-table">
+                        <thead><tr><th>নাম</th><th>দাম</th><th>স্টক</th><th>অ্যাকশন</th></tr></thead>
+                        <tbody id="adminProductsList"></tbody>
+                    </table>
+                </div>
+                
+                <div id="adminOrdersTab" style="display:none;">
+                    <table class="admin-table">
+                        <thead><tr><th>আইডি</th><th>গ্রাহক</th><th>ফোন</th><th>টোটাল</th><th>পেমেন্ট</th></tr></thead>
+                        <tbody id="adminOrdersList"></tbody>
+                    </table>
+                </div>
+                
+                <div id="adminAddTab" style="display:none;">
+                    <form onsubmit="addNewProduct(event)">
+                        <input type="text" id="newProductName" placeholder="প্রোডাক্ট নাম" required>
+                        <input type="number" id="newProductPrice" placeholder="বিক্রয় দাম" required>
+                        <input type="number" id="newProductStock" placeholder="স্টক" required>
+                        <select id="newProductCategory" required>
+                            <option value="">ক্যাটাগরি</option>
+                            <option value="electronics">মোবাইল</option>
+                            <option value="laptop">ল্যাপটপ</option>
+                            <option value="clothing">কাপড়</option>
+                            <option value="shoes">জুতা</option>
+                            <option value="beauty">সৌন্দর্য</option>
+                        </select>
+                        <input type="text" id="newProductEmoji" placeholder="ইমোজি (📱)" required>
+                        <button type="submit" class="login-btn">যোগ করুন</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+  </html>
